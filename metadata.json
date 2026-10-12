@@ -1,0 +1,8 @@
+{
+  "name": "MediSeba",
+  "description": "Smart Healthcare Platform for booking doctor appointments and AI-powered medical insights.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
