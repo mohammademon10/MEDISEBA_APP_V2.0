@@ -9,6 +9,8 @@
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
+    "db:setup:staging": "powershell -ExecutionPolicy Bypass -File scripts/setup-staging-credentials.ps1",
+    "db:setup:staging:cli": "powershell -ExecutionPolicy Bypass -File scripts/setup-staging-credentials.ps1 -Cli",
     "db:migrate:staging": "node scripts/apply-staging-migrations.mjs",
     "db:migrate:staging:dry": "node scripts/apply-staging-migrations.mjs --dry-run",
     "db:test:staging": "node scripts/run-staging-db-tests.mjs"
