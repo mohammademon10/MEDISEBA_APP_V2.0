@@ -97,9 +97,9 @@ if ($passwordOrUri.StartsWith("postgresql://") -or $passwordOrUri.StartsWith("po
     $finalDbUrl = $passwordOrUri
     if (-not $finalDbUrl.Contains("sslmode=")) {
         if ($finalDbUrl.Contains("?")) {
-            $finalDbUrl = $finalDbUrl + "&sslmode=require"
+            $finalDbUrl = [string]::Concat($finalDbUrl, [char]38, "sslmode=require")
         } else {
-            $finalDbUrl = $finalDbUrl + "?sslmode=require"
+            $finalDbUrl = [string]::Concat($finalDbUrl, "?sslmode=require")
         }
     }
 } else {
@@ -109,18 +109,13 @@ if ($passwordOrUri.StartsWith("postgresql://") -or $passwordOrUri.StartsWith("po
 }
 
 # Write .env.staging safely
-$envContent = @"
-# MediSeba V3 Staging Database Credentials (Git-Ignored)
-# Project Reference: $projectRef
-MEDISEBA_STAGING_DATABASE_URL=$finalDbUrl
-MEDISEBA_STAGING_PROJECT_REF=$projectRef
-"@
+$envContent = "# MediSeba V3 Staging Database Credentials (Git-Ignored)`nMEDISEBA_STAGING_DATABASE_URL=" + $finalDbUrl + "`nMEDISEBA_STAGING_PROJECT_REF=" + $projectRef + "`n"
 
 [System.IO.File]::WriteAllText($envStagingPath, $envContent, [System.Text.Encoding]::UTF8)
 
 # Restrict Windows file ACLs
 try {
-    $aclUser = "$($env:USERNAME):(R,W)"
+    $aclUser = $env:USERNAME + ':(R,W)'
     icacls $envStagingPath /inheritance:r /grant:r $aclUser | Out-Null
 } catch {}
 
