@@ -8,7 +8,10 @@
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "db:migrate:staging": "node scripts/apply-staging-migrations.mjs",
+    "db:migrate:staging:dry": "node scripts/apply-staging-migrations.mjs --dry-run",
+    "db:test:staging": "node scripts/run-staging-db-tests.mjs"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",
