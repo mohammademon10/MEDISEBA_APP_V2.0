@@ -7,23 +7,17 @@ import Specialties from './components/home/Specialties';
 import FeaturedDoctors from './components/home/FeaturedDoctors';
 import HowItWorks from './components/home/HowItWorks';
 import AIAnalysisDemo from './components/home/AIAnalysisDemo';
-import { Mail, Phone, MapPin, Search } from 'lucide-react';
+import { Phone } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import AuthPage from './pages/Auth';
 import DoctorsPage from './pages/Doctors';
 import DoctorDetailPage from './pages/DoctorDetail';
-import Dashboard from './pages/Dashboard';
-
-function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: string }) {
-  const { user, userData, loading } = useAuth();
-
-  if (loading) return <div className="min-h-screen bg-brand-bg flex items-center justify-center text-white">Loading...</div>;
-  if (!user) return <Navigate to="/login" />;
-  if (role && userData?.role !== role) return <Navigate to="/" />;
-
-  return <>{children}</>;
-}
+import Portal from './pages/Portal';
+import Admin from './pages/Admin';
+import DoctorDashboard from './pages/DoctorDashboard';
+import PatientDashboard from './pages/PatientDashboard';
+import DoctorPendingVerification from './pages/DoctorPendingVerification';
 
 function Home() {
   return (
@@ -84,14 +78,29 @@ export default function App() {
       <Router>
         <Layout>
           <Routes>
+            {/* Public Marketing & Directory */}
             <Route path="/" element={<Home />} />
             <Route path="/doctors" element={<DoctorsPage />} />
             <Route path="/doctor/:id" element={<DoctorDetailPage />} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/how-it-works" element={<PagePlaceholder title="How MediSeba Works" />} />
             <Route path="/about" element={<PagePlaceholder title="About MediSeba" />} />
-            <Route path="/login" element={<AuthPage mode="login" />} />
             <Route path="/register" element={<AuthPage mode="register" />} />
+
+            {/* Portal 1: Dedicated Admin Access */}
+            <Route path="/admin" element={<Admin />} />
+
+            {/* Portal 2: Shared Doctor & Patient Access */}
+            <Route path="/portal" element={<Portal />} />
+            <Route path="/login" element={<Navigate to="/portal" replace />} />
+            <Route path="/dashboard" element={<Navigate to="/portal" replace />} />
+
+            {/* Role-Specific Dashboards */}
+            <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
+            <Route path="/doctor/pending-verification" element={<DoctorPendingVerification />} />
+            <Route path="/patient/dashboard" element={<PatientDashboard />} />
+
+            {/* Catch-all Fallback */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Layout>
       </Router>

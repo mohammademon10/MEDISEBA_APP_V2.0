@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, PlusCircle, Activity, LayoutDashboard, User } from 'lucide-react';
+import { Menu, X, PlusCircle, Activity, LayoutDashboard, User, ShieldCheck, Stethoscope } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -24,6 +24,20 @@ export default function Navbar() {
     { name: 'How It Works', path: '/how-it-works' },
     { name: 'About', path: '/about' },
   ];
+
+  const getPortalDestination = () => {
+    if (!user) return '/portal';
+    if (userData?.role === 'admin') return '/admin';
+    if (userData?.role === 'doctor') return '/doctor/dashboard';
+    return '/patient/dashboard';
+  };
+
+  const getPortalLabel = () => {
+    if (!user) return 'Portal Login';
+    if (userData?.role === 'admin') return 'Admin Hub';
+    if (userData?.role === 'doctor') return 'Doctor Portal';
+    return 'Patient Portal';
+  };
 
   return (
     <nav 
@@ -58,14 +72,26 @@ export default function Navbar() {
             ))}
             <div className="flex items-center gap-3 pl-4 border-l border-white/10">
               {user ? (
-                <Link to="/dashboard" className="flex items-center gap-2 px-5 py-2.5 text-sm font-black text-brand-primary bg-brand-primary/10 border border-brand-primary/20 rounded-full hover:bg-brand-primary/20 transition-all uppercase tracking-widest">
+                <Link 
+                  to={getPortalDestination()} 
+                  className={`flex items-center gap-2 px-5 py-2.5 text-sm font-black rounded-full transition-all uppercase tracking-widest ${
+                    userData?.role === 'admin'
+                      ? 'text-red-400 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20'
+                      : userData?.role === 'doctor'
+                      ? 'text-brand-secondary bg-brand-secondary/10 border border-brand-secondary/20 hover:bg-brand-secondary/20'
+                      : 'text-brand-primary bg-brand-primary/10 border border-brand-primary/20 hover:bg-brand-primary/20'
+                  }`}
+                >
                   <LayoutDashboard size={18} />
-                  Dashboard
+                  {getPortalLabel()}
                 </Link>
               ) : (
                 <>
-                  <Link to="/login" className="px-4 py-2 text-sm font-bold text-brand-primary border border-brand-primary rounded-full hover:bg-brand-primary/10 transition-colors">
-                    Login
+                  <Link 
+                    to="/portal" 
+                    className="px-4 py-2 text-sm font-bold text-brand-primary border border-brand-primary rounded-full hover:bg-brand-primary/10 transition-colors"
+                  >
+                    Portal Login
                   </Link>
                   <Link to="/register" className="btn btn-primary !py-2.5 !px-6 text-sm">
                     Get Started
@@ -111,16 +137,16 @@ export default function Navbar() {
               <div className="flex flex-col gap-3">
                 {user ? (
                    <Link 
-                    to="/dashboard" 
+                    to={getPortalDestination()} 
                     onClick={() => setIsOpen(false)}
                     className="w-full text-center py-4 font-black text-brand-primary bg-brand-primary/10 rounded-2xl flex items-center justify-center gap-3 uppercase tracking-widest text-sm"
                    >
                     <LayoutDashboard size={20} />
-                    Dashboard
+                    {getPortalLabel()}
                    </Link>
                 ) : (
                   <>
-                    <Link to="/login" onClick={() => setIsOpen(false)} className="w-full text-center py-4 font-bold text-brand-text-dim">Login</Link>
+                    <Link to="/portal" onClick={() => setIsOpen(false)} className="w-full text-center py-4 font-bold text-brand-text-dim">Portal Login</Link>
                     <Link to="/register" onClick={() => setIsOpen(false)} className="btn btn-primary w-full !py-4">Get Started</Link>
                   </>
                 )}
