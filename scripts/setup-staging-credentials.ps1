@@ -97,15 +97,14 @@ if ($passwordOrUri.StartsWith("postgresql://") -or $passwordOrUri.StartsWith("po
     $finalDbUrl = $passwordOrUri
     if (-not $finalDbUrl.Contains("sslmode=")) {
         if ($finalDbUrl.Contains("?")) {
-            $finalDbUrl += "&sslmode=require"
+            $finalDbUrl = $finalDbUrl + "&sslmode=require"
         } else {
-            $finalDbUrl += "?sslmode=require"
+            $finalDbUrl = $finalDbUrl + "?sslmode=require"
         }
     }
 } else {
     # Password was provided directly. Construct standard Supabase connection URL
     $encodedPassword = [System.Uri]::EscapeDataString($passwordOrUri)
-    # Default to Singapore pooler (default for project in region)
     $finalDbUrl = "postgresql://postgres.${projectRef}:${encodedPassword}@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?sslmode=require"
 }
 
@@ -121,7 +120,8 @@ MEDISEBA_STAGING_PROJECT_REF=$projectRef
 
 # Restrict Windows file ACLs
 try {
-    & icacls $envStagingPath /inheritance:r /grant:r "$($env:USERNAME):(R,W)" | Out-Null
+    $aclUser = "$($env:USERNAME):(R,W)"
+    icacls $envStagingPath /inheritance:r /grant:r $aclUser | Out-Null
 } catch {}
 
 Write-Host "`n[SUCCESS] .env.staging created successfully." -ForegroundColor Green
