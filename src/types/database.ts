@@ -645,8 +645,18 @@ export interface Database {
           p_action: string;
           p_resource_type: string;
           p_resource_id?: string | null;
-          p_allowed: boolean;
+          p_allowed?: boolean;
           p_reason?: string | null;
+        };
+        Returns: string;
+      };
+      register_doctor_candidate: {
+        Args: {
+          p_bmdc_number: string;
+          p_specialty: string;
+          p_facility_id?: string | null;
+          p_bio?: string | null;
+          p_consultation_fee?: number;
         };
         Returns: string;
       };
